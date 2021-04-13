@@ -1,14 +1,35 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, useRef } from "react";
 import "./App.css";
 import Display from "./display";
 
-//useRef,generic functions
+//interface extends , type export , type intersection
+export type Props = {
+  clickedDetail: string;
+  inputValue: string | number;
+  handleChange: (e:events) => void;
+  customRender:()=>JSX.Element
+};
 
+type xy={
+ abc:string;
+fyh:number;
+
+}
+var thh:Props&xy={clickedDetail: "",
+  inputValue: "",
+  abc:"",
+  fyh:0,
+  handleChange: (e:events) => {return null},
+  customRender:()=><div></div>
+}
+  console.log(thh)
 interface ILocationTypes {
   pincode: number;
   city: string;
 }
-
+interface ILocationType extends ILocationTypes {
+  label: string;
+}
 export interface IlistItems {
   flight_number: number;
   mission_name: string;
@@ -20,7 +41,7 @@ export interface IlistItems {
   //   pincode:number,
   //   city:string
   // }[]
-  location: Array<ILocationTypes>;
+  location: Array<ILocationType>;
 }
 export interface events {
   target: {
@@ -28,6 +49,7 @@ export interface events {
   };
 }
 function App() {
+  const h1Ref = useRef<HTMLHeadingElement>(null);
   type IList = {
     flight_number: number;
     mission_name: string;
@@ -35,10 +57,7 @@ function App() {
     rocket: {
       rocket_id: string;
     };
-    location: {
-      pincode: number;
-      city: string;
-    }[];
+    location: Array<ILocationType>;
   }[];
 
   interface Istates {
@@ -73,9 +92,9 @@ function App() {
       rocket: {
         rocket_id: ""
       },
-      location: [{ pincode: 0, city: "" }]
+      location: [{ pincode: 0, city: "",label: "" }]
     }
-  ]); //assign a iniital value
+  ]); 
   const [inputValue, setInputValue] = useState<string | number>("");
   const [state, dispatch] = useReducer<React.Reducer<Istates, Iactions>>(
     reducer,
@@ -84,12 +103,26 @@ function App() {
 
   useEffect(() => {
     fetchList();
+    console.log(h1Ref); 
   }, []);
 
   const customRender = ():JSX.Element => {
     return <p>it's a dom</p>;
   };
 
+  //generic fn
+  // interface GenericIdentityFn {
+  //   <Type>(arg: Type): Type;
+  // }
+  
+  function identity<Type>(arg: Type): Type {
+    return arg;
+  }
+  
+  // let myIdentity: GenericIdentityFn = identity;
+  console.log(identity(75))
+
+  
   const fetchList = () => {
     //fn return type
     return fetch("https://api.spacexdata.com/v3/launches?limit=20&offset=0")
@@ -106,9 +139,9 @@ function App() {
 
   return (
     <div className="App">
+      <h2 ref={h1Ref}>App</h2>
       <ul className="list">
         {list.map((item: IlistItems, id: number) => {
-          //,sadfsa,asdfsdf,lasldfl,sdfasdf,sasdfdsf -- using intersection
           return (
             <li onClick={() => dispatch({ type: "clicked", index: id })}>
               <p>{item.flight_number}</p> <p>{item.mission_name}</p>{" "}

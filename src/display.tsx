@@ -1,12 +1,7 @@
 import React from "react";
-import { IlistItems, events } from "./App";
+import { IlistItems, Props} from "./App";
 
-type Props = {
-  clickedDetail: string;
-  inputValue: string | number;
-  handleChange: (e:events) => void;
-  customRender:()=>JSX.Element
-};
+
 
 function Display({ clickedDetail, inputValue, handleChange, customRender }: Props) {
   //get a function
@@ -20,14 +15,15 @@ function Display({ clickedDetail, inputValue, handleChange, customRender }: Prop
     location: [
       {
         pincode: 7845,
-        city: "djhgf"
+        city: "djhgf",
+        label:"label"
       }
     ]
   };
   return (
     <div>
       {customRender()}
-      <p>{items.location[0].city}</p>
+      <p>{items.location[0].label}</p>
       <input onChange={handleChange} value={inputValue} />
       <div className="display">{clickedDetail}</div>
     </div>
